@@ -1,0 +1,57 @@
+{
+    "name": "ubertab",
+    "displayName": "Ubertab",
+    "description": "Context sensitive tabbing",
+    "icon": "icon.png",
+    "version": "0.0.1",
+    "publisher": "Gruntfuggly",
+    "repository": "https://github.com/Gruntfuggly/ubertab",
+    "engines": {
+        "vscode": "^1.5.0"
+    },
+    "categories": [
+        "Other"
+    ],
+    "activationEvents": [
+        "*"
+    ],
+    "main": "./extension",
+    "contributes": {
+        "commands": [
+            {
+                "command": "ubertab.enable",
+                "title": "Ubertab: Enable"
+            },
+            {
+                "command": "ubertab.disable",
+                "title": "Ubertab: Disable"
+            }
+        ],
+        "keybindings": [
+            {
+                "key": "tab",
+                "command": "ubertab.tabForward",
+                "when": "editorTextFocus && ubertab-enabled"
+            },
+            {
+                "key": "shift+tab",
+                "command": "ubertab.tabBackward",
+                "when": "editorTextFocus && ubertab-enabled"
+            }
+        ],
+        "configuration": {
+            "type": "object",
+            "title": "Ubertab",
+            "properties": {
+                "ubertab.enabled": {
+                    "type": "boolean",
+                    "default": "true",
+                    "markdownDescription": "Enable Ubertab"
+                }
+            }
+        }
+    },
+    "devDependencies": {
+        "vscode": "^1.0.0"
+    }
+}
