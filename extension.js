@@ -23,16 +23,26 @@ function activate( context )
     {
         button.text = "$(diff-renamed) $(thumbs" + ( enabled ? "up" : "down" ) + ")";
         button.command = 'ubertab.' + ( enabled ? 'disable' : 'enable' );
-        button.show();
+        button.tooltip = ( enabled ? "Disable" : "Enable" ) + " Ubertab";
+
+        if( vscode.workspace.getConfiguration( 'ubertab' ).get( 'showInStatusBar' ) === true )
+        {
+            button.show();
+        }
+        else
+        {
+            button.hide();
+        }
+    }
+
+    function updateButton()
+    {
+        setButton( vscode.workspace.getConfiguration( 'ubertab' ).get( 'enabled' ) );
     }
 
     function setEnabled( enabled )
     {
-        vscode.workspace.getConfiguration( 'ubertab' ).update( 'enabled', enabled, false ).then( function()
-        {
-            vscode.commands.executeCommand( 'setContext', 'ubertab-enabled', enabled );
-            setButton( enabled )
-        } );
+        vscode.workspace.getConfiguration( 'ubertab' ).update( 'enabled', enabled );
     }
 
     function enable()
@@ -186,7 +196,15 @@ function activate( context )
     context.subscriptions.push( vscode.commands.registerCommand( 'ubertab.tabForward', tabForward ) );
     context.subscriptions.push( vscode.commands.registerCommand( 'ubertab.tabBackward', tabBackward ) );
 
-    setEnabled( vscode.workspace.getConfiguration( 'ubertab' ).get( 'enabled' ) );
+    context.subscriptions.push( vscode.workspace.onDidChangeConfiguration( function( e )
+    {
+        if( e.affectsConfiguration( 'ubertab' ) )
+        {
+            updateButton();
+        }
+    } ) );
+
+    updateButton();
 }
 
 exports.activate = activate;

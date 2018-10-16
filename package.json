@@ -3,7 +3,7 @@
     "displayName": "Ubertab",
     "description": "Context sensitive tabbing",
     "icon": "icon.png",
-    "version": "0.0.1",
+    "version": "0.0.2",
     "publisher": "Gruntfuggly",
     "repository": "https://github.com/Gruntfuggly/ubertab",
     "engines": {
@@ -45,8 +45,13 @@
             "properties": {
                 "ubertab.enabled": {
                     "type": "boolean",
-                    "default": "true",
+                    "default": true,
                     "markdownDescription": "Enable Ubertab"
+                },
+                "ubertab.showInStatusBar": {
+                    "type": "boolean",
+                    "default": true,
+                    "markdownDescription": "Show status bar button"
                 }
             }
         }
