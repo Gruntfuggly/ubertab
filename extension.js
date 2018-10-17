@@ -43,6 +43,7 @@ function activate( context )
     function setEnabled( enabled )
     {
         vscode.workspace.getConfiguration( 'ubertab' ).update( 'enabled', enabled );
+        vscode.commands.executeCommand( 'setContext', 'ubertab-enabled', enabled );
     }
 
     function enable()
@@ -203,6 +204,8 @@ function activate( context )
             updateButton();
         }
     } ) );
+
+    vscode.commands.executeCommand( 'setContext', 'ubertab-enabled', vscode.workspace.getConfiguration( 'ubertab' ).get( 'enabled' ) );
 
     updateButton();
 }

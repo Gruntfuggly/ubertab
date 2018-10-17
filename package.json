@@ -3,7 +3,7 @@
     "displayName": "Ubertab",
     "description": "Context sensitive tabbing",
     "icon": "icon.png",
-    "version": "0.0.2",
+    "version": "0.0.3",
     "publisher": "Gruntfuggly",
     "repository": "https://github.com/Gruntfuggly/ubertab",
     "engines": {

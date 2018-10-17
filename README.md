@@ -7,12 +7,14 @@ Makes the tab key more useful...
 - jumps out of brackets, braces, quotes, etc.
 - moves to the next non-space item
 
-Turn it on and off using the status bar button.
+Turn it on and off using the status bar button: <img src="https://raw.githubusercontent.com/Gruntfuggly/ubertab/master/button.png">
 
 ### TODO
 
 - [ ] Be more intelligent with nested brackets, etc.
 - [ ] Handle start and end of lines differently
+- [ ] Move past spaces
+- [ ] Make enabled flag a workspace setting
 
 ## Installing
 
