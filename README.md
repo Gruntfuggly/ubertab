@@ -12,8 +12,6 @@ Turn it on and off using the status bar button: <img src="https://raw.githubuser
 ### TODO
 
 - [ ] Be more intelligent with nested brackets, etc.
-- [ ] Handle start and end of lines differently
-- [ ] Move past spaces
 - [ ] Make enabled flag a workspace setting
 
 ## Installing

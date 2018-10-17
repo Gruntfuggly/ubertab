@@ -1,3 +1,7 @@
+# v0.0.4 - 2018-10-17
+- Move past spaces
+- Move to previous and next lines
+
 # v0.0.3 - 2018-10-17
 - Fix key bindings
 

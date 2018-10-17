@@ -116,9 +116,19 @@ function activate( context )
                     var spaceOffset = line.text.substring( position ).indexOf( ' ' );
                     if( spaceOffset > -1 )
                     {
+                        while( line.text[ position + spaceOffset + 1 ] === ' ' )
+                        {
+                            spaceOffset++;
+                        }
                         var location = document.positionAt( lineOffset + position + spaceOffset + 1 );
                         newSelections.push( new vscode.Selection( location, location ) );
+                        moved = true;
                     }
+                }
+                if( moved === false )
+                {
+                    var location = document.positionAt( lineOffset + line.text.length + 1 );
+                    newSelections.push( new vscode.Selection( location, location ) );
                 }
             } );
 
@@ -143,7 +153,13 @@ function activate( context )
                 var line = document.lineAt( editor.selections[ 0 ].start );
                 var lineOffset = document.offsetAt( line.range.start );
                 var cursorOffset = document.offsetAt( editor.selections[ 0 ].start );
-                if( line.text.substring( 0, cursorOffset - lineOffset ).trim().length === 0 )
+                if( editor.selections[ 0 ].start.character === 0 )
+                {
+                    var location = document.positionAt( lineOffset - 1 );
+                    editor.selections = [ new vscode.Selection( location, location ) ];
+                    return;
+                }
+                else if( line.text.substring( 0, cursorOffset - lineOffset ).trim().length === 0 )
                 {
                     vscode.commands.executeCommand( 'outdent' );
                     return;
@@ -176,12 +192,16 @@ function activate( context )
                 }
                 if( moved === false )
                 {
-                    var spaceOffset = line.text.substring( 0, position - 1 ).lastIndexOf( ' ' );
-                    if( spaceOffset > -1 )
+                    while( position > 0 && line.text[ position - 1 ] === ' ' )
                     {
-                        var location = document.positionAt( lineOffset + spaceOffset + 1 );
-                        newSelections.push( new vscode.Selection( location, location ) );
+                        position--;
                     }
+                    while( position > 0 && line.text[ position - 1 ] !== ' ' )
+                    {
+                        position--;
+                    }
+                    var location = document.positionAt( lineOffset + position );
+                    newSelections.push( new vscode.Selection( location, location ) );
                 }
             } );
 
