@@ -66,158 +66,150 @@ function activate( context )
         return backwardTargets[ c ] === undefined ? c : backwardTargets[ c ];
     }
 
-    function tabForward()
+    function tabForward(editor)
     {
-        var editor = vscode.window.activeTextEditor;
-        if( editor )
+        var document = editor.document;
+
+        var newSelections = [];
+
+        if( editor.selections.length === 1 )
         {
-            var document = editor.document;
-
-            var newSelections = [];
-
-            if( editor.selections.length === 1 )
+            var line = document.lineAt( editor.selections[ 0 ].start );
+            var lineOffset = document.offsetAt( line.range.start );
+            var cursorOffset = document.offsetAt( editor.selections[ 0 ].start );
+            var shouldIndent = vscode.workspace.getConfiguration( 'ubertab' ).get( 'shouldIndent', true );
+            if( line.text.substring( 0, cursorOffset - lineOffset ).trim().length === 0 && shouldIndent )
             {
-                var line = document.lineAt( editor.selections[ 0 ].start );
-                var lineOffset = document.offsetAt( line.range.start );
-                var cursorOffset = document.offsetAt( editor.selections[ 0 ].start );
-                var shouldIndent = vscode.workspace.getConfiguration( 'ubertab' ).get( 'shouldIndent', true );
-                if( line.text.substring( 0, cursorOffset - lineOffset ).trim().length === 0 && shouldIndent )
-                {
-                    vscode.commands.executeCommand( 'tab' );
-                    return;
-                }
+                vscode.commands.executeCommand( 'tab' );
+                return;
             }
+        }
 
-            editor.selections.map( function( selection )
+        editor.selections.map( function( selection )
+        {
+            var line = document.lineAt( selection.start );
+            var lineOffset = document.offsetAt( line.range.start );
+            var cursorOffset = document.offsetAt( selection.start );
+            var position = cursorOffset - lineOffset;
+
+            var moved = false;
+            for( var c = position; c >= 0; --c )
             {
-                var line = document.lineAt( selection.start );
-                var lineOffset = document.offsetAt( line.range.start );
-                var cursorOffset = document.offsetAt( selection.start );
-                var position = cursorOffset - lineOffset;
-
-                var moved = false;
-                for( var c = position; c >= 0; --c )
+                var character = line.text[ c ];
+                if( nonAlphaNumeric.test( character ) )
                 {
-                    var character = line.text[ c ];
-                    if( nonAlphaNumeric.test( character ) )
+                    var target = forwardTarget( line.text[ c ] );
+                    var found = line.text.substring( position ).indexOf( target );
+                    if( found > -1 )
                     {
-                        var target = forwardTarget( line.text[ c ] );
-                        var found = line.text.substring( position ).indexOf( target );
-                        if( found > -1 )
-                        {
-                            var location = document.positionAt( lineOffset + position + found + 1 );
-                            newSelections.push( new vscode.Selection( location, location ) );
-                            moved = true;
-                            break;
-                        }
-                    }
-                }
-                if( moved === false )
-                {
-                    var spaceOffset = line.text.substring( position ).indexOf( ' ' );
-                    if( spaceOffset > -1 )
-                    {
-                        while( line.text[ position + spaceOffset + 1 ] === ' ' )
-                        {
-                            spaceOffset++;
-                        }
-                        var location = document.positionAt( lineOffset + position + spaceOffset + 1 );
+                        var location = document.positionAt( lineOffset + position + found + 1 );
                         newSelections.push( new vscode.Selection( location, location ) );
                         moved = true;
+                        break;
                     }
                 }
-                if( moved === false )
-                {
-                    var location = document.positionAt( lineOffset + line.text.length + 1 );
-                    newSelections.push( new vscode.Selection( location, location ) );
-                }
-            } );
-
-            if( newSelections.length > 0 )
-            {
-                editor.selections = newSelections;
             }
+            if( moved === false )
+            {
+                var spaceOffset = line.text.substring( position ).indexOf( ' ' );
+                if( spaceOffset > -1 )
+                {
+                    while( line.text[ position + spaceOffset + 1 ] === ' ' )
+                    {
+                        spaceOffset++;
+                    }
+                    var location = document.positionAt( lineOffset + position + spaceOffset + 1 );
+                    newSelections.push( new vscode.Selection( location, location ) );
+                    moved = true;
+                }
+            }
+            if( moved === false )
+            {
+                var location = document.positionAt( lineOffset + line.text.length + 1 );
+                newSelections.push( new vscode.Selection( location, location ) );
+            }
+        } );
+
+        if( newSelections.length > 0 )
+        {
+            editor.selections = newSelections;
         }
     }
 
-    function tabBackward()
+    function tabBackward(editor)
     {
-        var editor = vscode.window.activeTextEditor;
-        if( editor )
+        var document = editor.document;
+
+        var newSelections = [];
+
+        if( editor.selections.length === 1 )
         {
-            var document = editor.document;
-
-            var newSelections = [];
-
-            if( editor.selections.length === 1 )
+            var line = document.lineAt( editor.selections[ 0 ].start );
+            var lineOffset = document.offsetAt( line.range.start );
+            var cursorOffset = document.offsetAt( editor.selections[ 0 ].start );
+            var shouldIndent = vscode.workspace.getConfiguration( 'ubertab' ).get( 'shouldIndent', true );
+            if( editor.selections[ 0 ].start.character === 0 )
             {
-                var line = document.lineAt( editor.selections[ 0 ].start );
-                var lineOffset = document.offsetAt( line.range.start );
-                var cursorOffset = document.offsetAt( editor.selections[ 0 ].start );
-                var shouldIndent = vscode.workspace.getConfiguration( 'ubertab' ).get( 'shouldIndent', true );
-                if( editor.selections[ 0 ].start.character === 0 )
+                var location = document.positionAt( lineOffset - 1 );
+                editor.selections = [ new vscode.Selection( location, location ) ];
+                return;
+            }
+            else if( line.text.substring( 0, cursorOffset - lineOffset ).trim().length === 0 && shouldIndent )
+            {
+                vscode.commands.executeCommand( 'outdent' );
+                return;
+            }
+        }
+
+        editor.selections.map( function( selection )
+        {
+            var line = document.lineAt( selection.start );
+            var lineOffset = document.offsetAt( line.range.start );
+            var cursorOffset = document.offsetAt( selection.start );
+            var position = cursorOffset - lineOffset;
+
+            var moved = false;
+            for( var c = position - 1; c < line.range.end.character - line.range.start.character; ++c )
+            {
+                var character = line.text[ c ];
+                if( nonAlphaNumeric.test( character ) )
                 {
-                    var location = document.positionAt( lineOffset - 1 );
-                    editor.selections = [ new vscode.Selection( location, location ) ];
-                    return;
-                }
-                else if( line.text.substring( 0, cursorOffset - lineOffset ).trim().length === 0 && shouldIndent )
-                {
-                    vscode.commands.executeCommand( 'outdent' );
-                    return;
+                    var target = backwardTarget( line.text[ c ] );
+                    var found = line.text.substring( 0, position - 1 ).lastIndexOf( target );
+                    if( found > -1 )
+                    {
+                        var location = document.positionAt( lineOffset + found + 1 );
+                        newSelections.push( new vscode.Selection( location, location ) );
+                        moved = true;
+                        break;
+                    }
                 }
             }
-
-            editor.selections.map( function( selection )
+            if( moved === false )
             {
-                var line = document.lineAt( selection.start );
-                var lineOffset = document.offsetAt( line.range.start );
-                var cursorOffset = document.offsetAt( selection.start );
-                var position = cursorOffset - lineOffset;
-
-                var moved = false;
-                for( var c = position - 1; c < line.range.end.character - line.range.start.character; ++c )
+                while( position > 0 && line.text[ position - 1 ] === ' ' )
                 {
-                    var character = line.text[ c ];
-                    if( nonAlphaNumeric.test( character ) )
-                    {
-                        var target = backwardTarget( line.text[ c ] );
-                        var found = line.text.substring( 0, position - 1 ).lastIndexOf( target );
-                        if( found > -1 )
-                        {
-                            var location = document.positionAt( lineOffset + found + 1 );
-                            newSelections.push( new vscode.Selection( location, location ) );
-                            moved = true;
-                            break;
-                        }
-                    }
+                    position--;
                 }
-                if( moved === false )
+                while( position > 0 && line.text[ position - 1 ] !== ' ' )
                 {
-                    while( position > 0 && line.text[ position - 1 ] === ' ' )
-                    {
-                        position--;
-                    }
-                    while( position > 0 && line.text[ position - 1 ] !== ' ' )
-                    {
-                        position--;
-                    }
-                    var location = document.positionAt( lineOffset + position );
-                    newSelections.push( new vscode.Selection( location, location ) );
+                    position--;
                 }
-            } );
-
-            if( newSelections.length > 0 )
-            {
-                editor.selections = newSelections;
+                var location = document.positionAt( lineOffset + position );
+                newSelections.push( new vscode.Selection( location, location ) );
             }
+        } );
+
+        if( newSelections.length > 0 )
+        {
+            editor.selections = newSelections;
         }
     }
 
     context.subscriptions.push( vscode.commands.registerCommand( 'ubertab.enable', enable ) );
     context.subscriptions.push( vscode.commands.registerCommand( 'ubertab.disable', disable ) );
-    context.subscriptions.push( vscode.commands.registerCommand( 'ubertab.tabForward', tabForward ) );
-    context.subscriptions.push( vscode.commands.registerCommand( 'ubertab.tabBackward', tabBackward ) );
+    context.subscriptions.push( vscode.commands.registerTextEditorCommand( 'ubertab.tabForward', tabForward ) );
+    context.subscriptions.push( vscode.commands.registerTextEditorCommand( 'ubertab.tabBackward', tabBackward ) );
 
     context.subscriptions.push( vscode.workspace.onDidChangeConfiguration( function( e )
     {
