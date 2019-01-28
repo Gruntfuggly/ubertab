@@ -80,7 +80,8 @@ function activate( context )
                 var line = document.lineAt( editor.selections[ 0 ].start );
                 var lineOffset = document.offsetAt( line.range.start );
                 var cursorOffset = document.offsetAt( editor.selections[ 0 ].start );
-                if( line.text.substring( 0, cursorOffset - lineOffset ).trim().length === 0 )
+                var shouldIndent = vscode.workspace.getConfiguration( 'ubertab' ).get( 'shouldIndent', true );
+                if( line.text.substring( 0, cursorOffset - lineOffset ).trim().length === 0 && shouldIndent )
                 {
                     vscode.commands.executeCommand( 'tab' );
                     return;
@@ -92,7 +93,7 @@ function activate( context )
                 var line = document.lineAt( selection.start );
                 var lineOffset = document.offsetAt( line.range.start );
                 var cursorOffset = document.offsetAt( selection.start );
-                var position = cursorOffset - lineOffset
+                var position = cursorOffset - lineOffset;
 
                 var moved = false;
                 for( var c = position; c >= 0; --c )
@@ -153,13 +154,14 @@ function activate( context )
                 var line = document.lineAt( editor.selections[ 0 ].start );
                 var lineOffset = document.offsetAt( line.range.start );
                 var cursorOffset = document.offsetAt( editor.selections[ 0 ].start );
+                var shouldIndent = vscode.workspace.getConfiguration( 'ubertab' ).get( 'shouldIndent', true );
                 if( editor.selections[ 0 ].start.character === 0 )
                 {
                     var location = document.positionAt( lineOffset - 1 );
                     editor.selections = [ new vscode.Selection( location, location ) ];
                     return;
                 }
-                else if( line.text.substring( 0, cursorOffset - lineOffset ).trim().length === 0 )
+                else if( line.text.substring( 0, cursorOffset - lineOffset ).trim().length === 0 && shouldIndent )
                 {
                     vscode.commands.executeCommand( 'outdent' );
                     return;
@@ -171,7 +173,7 @@ function activate( context )
                 var line = document.lineAt( selection.start );
                 var lineOffset = document.offsetAt( line.range.start );
                 var cursorOffset = document.offsetAt( selection.start );
-                var position = cursorOffset - lineOffset
+                var position = cursorOffset - lineOffset;
 
                 var moved = false;
                 for( var c = position - 1; c < line.range.end.character - line.range.start.character; ++c )

@@ -1,3 +1,6 @@
+# v0.0.6 - 2019-01-28
+- Add option to disable indenting
+
 # v0.0.5 - 2019-01-28
 - Remove functionality in certain contexts
 
