@@ -3,7 +3,7 @@
     "displayName": "Ubertab",
     "description": "Context sensitive tabbing",
     "icon": "icon.png",
-    "version": "0.0.4",
+    "version": "0.0.5",
     "publisher": "Gruntfuggly",
     "repository": "https://github.com/Gruntfuggly/ubertab",
     "engines": {
@@ -31,12 +31,12 @@
             {
                 "key": "tab",
                 "command": "ubertab.tabForward",
-                "when": "editorTextFocus && ubertab-enabled"
+                "when": "editorTextFocus && ubertab-enabled && !inSnippetMode && !suggestWidgetVisible && !editorHasMultipleSelections && !editorHasSelection"
             },
             {
                 "key": "shift+tab",
                 "command": "ubertab.tabBackward",
-                "when": "editorTextFocus && ubertab-enabled"
+                "when": "editorTextFocus && ubertab-enabled && !inSnippetMode && !suggestWidgetVisible && !editorHasMultipleSelections && !editorHasSelection"
             }
         ],
         "configuration": {

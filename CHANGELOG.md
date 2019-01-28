@@ -1,3 +1,6 @@
+# v0.0.5 - 2019-01-28
+- Remove functionality in certain contexts
+
 # v0.0.4 - 2018-10-17
 - Move past spaces
 - Move to previous and next lines
