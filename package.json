@@ -55,7 +55,7 @@
                 },
                 "ubertab.shouldIndent": {
                     "type": "boolean",
-                    "default": "true",
+                    "default": true,
                     "markdownDescription": "If true, pressing tab at the start of a line indents"
                 }
             }
