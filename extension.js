@@ -66,7 +66,7 @@ function activate( context )
         return backwardTargets[ c ] === undefined ? c : backwardTargets[ c ];
     }
 
-    function tabForward(editor)
+    function tabForward( editor )
     {
         var document = editor.document;
 
@@ -136,7 +136,7 @@ function activate( context )
         }
     }
 
-    function tabBackward(editor)
+    function tabBackward( editor )
     {
         var document = editor.document;
 
