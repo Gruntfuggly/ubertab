@@ -31,12 +31,12 @@
             {
                 "key": "tab",
                 "command": "ubertab.tabForward",
-                "when": "editorTextFocus && ubertab-enabled && !inSnippetMode && !suggestWidgetVisible && !editorHasMultipleSelections && !editorHasSelection"
+                "when": "editorTextFocus && ubertab-enabled && !inSnippetMode && !suggestWidgetVisible && !editorHasSelection"
             },
             {
                 "key": "shift+tab",
                 "command": "ubertab.tabBackward",
-                "when": "editorTextFocus && ubertab-enabled && !inSnippetMode && !suggestWidgetVisible && !editorHasMultipleSelections && !editorHasSelection"
+                "when": "editorTextFocus && ubertab-enabled && !inSnippetMode && !suggestWidgetVisible && !editorHasSelection"
             }
         ],
         "configuration": {
