@@ -1,5 +1,28 @@
 var vscode = require( 'vscode' );
 
+function isWhitespace( char )
+{
+    return ( char == ' ' || char == '\t' );
+}
+
+function indexOfWhitespace( text )
+{
+    var space = text.indexOf( ' ' );
+    var tab = text.indexOf( '\t' );
+    if( tab === -1 )
+    {
+        return space;
+    }
+    else if( space === -1 )
+    {
+        return tab;
+    }
+    else
+    {
+        return space < tab ? space : tab;
+    }
+}
+
 function activate( context )
 {
     var forwardTargets = {
@@ -111,10 +134,10 @@ function activate( context )
             }
             if( moved === false )
             {
-                var spaceOffset = line.text.substring( position ).indexOf( ' ' );
+                var spaceOffset = indexOfWhitespace( line.text.substring( position ) );
                 if( spaceOffset > -1 )
                 {
-                    while( line.text[ position + spaceOffset + 1 ] === ' ' )
+                    while( isWhitespace( line.text[ position + spaceOffset + 1 ] ) )
                     {
                         spaceOffset++;
                     }
@@ -187,11 +210,11 @@ function activate( context )
             }
             if( moved === false )
             {
-                while( position > 0 && line.text[ position - 1 ] === ' ' )
+                while( position > 0 && isWhitespace( line.text[ position - 1 ] ) )
                 {
                     position--;
                 }
-                while( position > 0 && line.text[ position - 1 ] !== ' ' )
+                while( position > 0 && isWhitespace( line.text[ position - 1 ] ) === false )
                 {
                     position--;
                 }
