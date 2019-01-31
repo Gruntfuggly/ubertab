@@ -1,3 +1,7 @@
+# v0.0.7 - 2019-01-31
+- Treat tabs the same as spaces
+- Merged minor fixes (thanks to [usernamehw](https://github.com/usernamehw))
+
 # v0.0.6 - 2019-01-28
 - Add option to disable indenting
 
