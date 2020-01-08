@@ -57,11 +57,36 @@
                     "type": "boolean",
                     "default": true,
                     "markdownDescription": "If true, pressing tab at the start of a line indents"
+                },
+                "ubertab.tabOutOfBraces": {
+                    "type": "boolean",
+                    "default": true,
+                    "markdownDescription": "Tab should jump out of matching braces"
+                },
+                "ubertab.tabOutOfBrackets": {
+                    "type": "boolean",
+                    "default": true,
+                    "markdownDescription": "Tab should jump out of matching brackets"
+                },
+                "ubertab.tabOutOfSquareBrackets": {
+                    "type": "boolean",
+                    "default": true,
+                    "markdownDescription": "Tab should jump out of matching square brackets"
+                },
+                "ubertab.tabOutOfAngleBrackets": {
+                    "type": "boolean",
+                    "default": true,
+                    "markdownDescription": "Tab should jump out of matching angle brackets"
                 }
             }
         }
     },
     "devDependencies": {
         "vscode": "^1.0.0"
+    },
+    "__metadata": {
+        "id": "687f0278-d187-4794-90f6-be61b4689b7a",
+        "publisherDisplayName": "Gruntfuggly",
+        "publisherId": "d4906d2e-f2ee-492d-9c7c-02b6160599ec"
     }
 }

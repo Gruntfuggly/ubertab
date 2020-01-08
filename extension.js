@@ -25,22 +25,38 @@ function indexOfWhitespace( text )
 
 function activate( context )
 {
-    var forwardTargets = {
-        '(': ')',
-        '[': ']',
-        '{': '}',
-        '<': '>'
-    };
-    var backwardTargets = {
-        ')': '(',
-        ']': '[',
-        '}': '{',
-        '>': '<'
-    };
+    var forwardTargets = {}
+    var backwardTargets = {};
 
     var nonAlphaNumeric = /[^a-z0-9\s]/i;
 
     var button = vscode.window.createStatusBarItem( vscode.StatusBarAlignment.Left, 0 );
+
+    var config = vscode.workspace.getConfiguration( 'ubertab' );
+
+    function setOptions()
+    {
+        if( config.get( 'tabOutOfBraces', false ) !== true )
+        {
+            forwardTargets[ '{' ] = '}';
+            backwardTargets[ '}' ] = '{';
+        }
+        if( config.get( 'tabOutOfBrackets', false ) !== true )
+        {
+            forwardTargets[ '(' ] = ')';
+            backwardTargets[ ')' ] = '(';
+        }
+        if( config.get( 'tabOutOfSquareBrackets', false ) !== true )
+        {
+            forwardTargets[ '[' ] = ']';
+            backwardTargets[ ']' ] = '[';
+        }
+        if( config.get( 'tabOutOfAngleBrackets', false ) !== true )
+        {
+            forwardTargets[ '<' ] = '>';
+            backwardTargets[ '>' ] = '<';
+        }
+    }
 
     function setButton( enabled )
     {
@@ -48,7 +64,7 @@ function activate( context )
         button.command = 'ubertab.' + ( enabled ? 'disable' : 'enable' );
         button.tooltip = ( enabled ? "Disable" : "Enable" ) + " Ubertab";
 
-        if( vscode.workspace.getConfiguration( 'ubertab' ).get( 'showInStatusBar' ) === true )
+        if( config.get( 'showInStatusBar' ) === true )
         {
             button.show();
         }
@@ -65,7 +81,7 @@ function activate( context )
 
     function setEnabled( enabled )
     {
-        vscode.workspace.getConfiguration( 'ubertab' ).update( 'enabled', enabled );
+        config.update( 'enabled', enabled );
         vscode.commands.executeCommand( 'setContext', 'ubertab-enabled', enabled );
     }
 
@@ -100,7 +116,7 @@ function activate( context )
             var line = document.lineAt( editor.selections[ 0 ].start );
             var lineOffset = document.offsetAt( line.range.start );
             var cursorOffset = document.offsetAt( editor.selections[ 0 ].start );
-            var shouldIndent = vscode.workspace.getConfiguration( 'ubertab' ).get( 'shouldIndent', true );
+            var shouldIndent = config.get( 'shouldIndent', true );
             if( line.text.substring( 0, cursorOffset - lineOffset ).trim().length === 0 && shouldIndent )
             {
                 vscode.commands.executeCommand( 'tab' );
@@ -122,6 +138,7 @@ function activate( context )
                 if( nonAlphaNumeric.test( character ) )
                 {
                     var target = forwardTarget( line.text[ c ] );
+                    console.log( "Found '" + target + "'" );
                     var found = line.text.substring( position ).indexOf( target );
                     if( found > -1 )
                     {
@@ -134,6 +151,7 @@ function activate( context )
             }
             if( moved === false )
             {
+                console.log( "moving to whitespace" );
                 var spaceOffset = indexOfWhitespace( line.text.substring( position ) );
                 if( spaceOffset > -1 )
                 {
@@ -170,7 +188,7 @@ function activate( context )
             var line = document.lineAt( editor.selections[ 0 ].start );
             var lineOffset = document.offsetAt( line.range.start );
             var cursorOffset = document.offsetAt( editor.selections[ 0 ].start );
-            var shouldIndent = vscode.workspace.getConfiguration( 'ubertab' ).get( 'shouldIndent', true );
+            var shouldIndent = config.get( 'shouldIndent', true );
             if( editor.selections[ 0 ].start.character === 0 )
             {
                 var location = document.positionAt( lineOffset - 1 );
@@ -238,12 +256,14 @@ function activate( context )
     {
         if( e.affectsConfiguration( 'ubertab' ) )
         {
+            setOptions();
             updateButton();
         }
     } ) );
 
-    vscode.commands.executeCommand( 'setContext', 'ubertab-enabled', vscode.workspace.getConfiguration( 'ubertab' ).get( 'enabled' ) );
+    vscode.commands.executeCommand( 'setContext', 'ubertab-enabled', config.get( 'enabled' ) );
 
+    setOptions();
     updateButton();
 }
 
